@@ -80,7 +80,7 @@ func AddShortURL(ctx context.Context, c *app.RequestContext) {
 
 	cfg, err := defaultShortService.AddConfig(ctx, short, req.GetRedirectURL(), req.GetDesp(), req.GetToken())
 	if err != nil {
-		hlog.CtxWarnf(ctx, "add short url failed, err=%v", err)
+		hlog.CtxWarnf(ctx, "add short url=%v failed, err=%v", req.Short, err)
 		c.JSON(consts.StatusBadRequest, &simple_short_url.AddShortURLResponse{BaseResp: &simple_short_url.BaseResp{StatusMessage: err.Error()}})
 	}
 	hlog.CtxInfof(ctx, "add short url success, short=%v long=%v", cfg.Short, cfg.Long)
