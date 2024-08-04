@@ -10,6 +10,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 	"github.com/mcoder2014/simple_short_url/biz/domain/service"
 	"github.com/mcoder2014/simple_short_url/biz/model/simple_short_url"
+	"github.com/mcoder2014/simple_short_url/util"
 )
 
 var defaultShortService *service.ShortService
@@ -69,7 +70,13 @@ func AddShortURL(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	cfg, err := defaultShortService.AddConfig(ctx, req.GetShort(), req.GetRedirectURL(), req.GetDesp(), req.GetToken())
+	var short = req.GetShort()
+	if req.GetShort() == "" {
+		const defaultLength = 8
+		short = util.GenerateRandomString(defaultLength)
+	}
+
+	cfg, err := defaultShortService.AddConfig(ctx, short, req.GetRedirectURL(), req.GetDesp(), req.GetToken())
 	if err != nil {
 		hlog.CtxWarnf(ctx, "add short url failed, err=%v", err)
 		c.JSON(consts.StatusBadRequest, &simple_short_url.AddShortURLResponse{BaseResp: &simple_short_url.BaseResp{StatusMessage: err.Error()}})
