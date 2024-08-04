@@ -8,70 +8,1938 @@ import (
 	"github.com/apache/thrift/lib/go/thrift"
 )
 
-type HelloService interface {
-	Hello(ctx context.Context, name string) (r string, err error)
+type BaseResp struct {
+	StatusMessage string `thrift:"StatusMessage,1" form:"message" json:"message"`
+	StatusCode    int32  `thrift:"StatusCode,2" form:"status_code" json:"status_code"`
 }
 
-type HelloServiceClient struct {
+func NewBaseResp() *BaseResp {
+	return &BaseResp{}
+}
+
+func (p *BaseResp) InitDefault() {
+}
+
+func (p *BaseResp) GetStatusMessage() (v string) {
+	return p.StatusMessage
+}
+
+func (p *BaseResp) GetStatusCode() (v int32) {
+	return p.StatusCode
+}
+
+var fieldIDToName_BaseResp = map[int16]string{
+	1: "StatusMessage",
+	2: "StatusCode",
+}
+
+func (p *BaseResp) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.I32 {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_BaseResp[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *BaseResp) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.StatusMessage = _field
+	return nil
+}
+func (p *BaseResp) ReadField2(iprot thrift.TProtocol) error {
+
+	var _field int32
+	if v, err := iprot.ReadI32(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.StatusCode = _field
+	return nil
+}
+
+func (p *BaseResp) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("BaseResp"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *BaseResp) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("StatusMessage", thrift.STRING, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.StatusMessage); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *BaseResp) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("StatusCode", thrift.I32, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI32(p.StatusCode); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *BaseResp) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("BaseResp(%+v)", *p)
+
+}
+
+type RedirectShortURLRequest struct {
+	URL string `thrift:"URL,1,required" json:"URL,required" path:"url,required"`
+}
+
+func NewRedirectShortURLRequest() *RedirectShortURLRequest {
+	return &RedirectShortURLRequest{}
+}
+
+func (p *RedirectShortURLRequest) InitDefault() {
+}
+
+func (p *RedirectShortURLRequest) GetURL() (v string) {
+	return p.URL
+}
+
+var fieldIDToName_RedirectShortURLRequest = map[int16]string{
+	1: "URL",
+}
+
+func (p *RedirectShortURLRequest) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetURL bool = false
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetURL = true
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	if !issetURL {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RedirectShortURLRequest[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_RedirectShortURLRequest[fieldId]))
+}
+
+func (p *RedirectShortURLRequest) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.URL = _field
+	return nil
+}
+
+func (p *RedirectShortURLRequest) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("RedirectShortURLRequest"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *RedirectShortURLRequest) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("URL", thrift.STRING, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.URL); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *RedirectShortURLRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RedirectShortURLRequest(%+v)", *p)
+
+}
+
+type RedirectShortURLResponse struct {
+	URL      string    `thrift:"URL,1" header:"Location" json:"URL"`
+	BaseResp *BaseResp `thrift:"BaseResp,255,optional" form:"BaseResp" json:"BaseResp,omitempty" query:"BaseResp"`
+}
+
+func NewRedirectShortURLResponse() *RedirectShortURLResponse {
+	return &RedirectShortURLResponse{}
+}
+
+func (p *RedirectShortURLResponse) InitDefault() {
+}
+
+func (p *RedirectShortURLResponse) GetURL() (v string) {
+	return p.URL
+}
+
+var RedirectShortURLResponse_BaseResp_DEFAULT *BaseResp
+
+func (p *RedirectShortURLResponse) GetBaseResp() (v *BaseResp) {
+	if !p.IsSetBaseResp() {
+		return RedirectShortURLResponse_BaseResp_DEFAULT
+	}
+	return p.BaseResp
+}
+
+var fieldIDToName_RedirectShortURLResponse = map[int16]string{
+	1:   "URL",
+	255: "BaseResp",
+}
+
+func (p *RedirectShortURLResponse) IsSetBaseResp() bool {
+	return p.BaseResp != nil
+}
+
+func (p *RedirectShortURLResponse) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RedirectShortURLResponse[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *RedirectShortURLResponse) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.URL = _field
+	return nil
+}
+func (p *RedirectShortURLResponse) ReadField255(iprot thrift.TProtocol) error {
+	_field := NewBaseResp()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.BaseResp = _field
+	return nil
+}
+
+func (p *RedirectShortURLResponse) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("RedirectShortURLResponse"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *RedirectShortURLResponse) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("URL", thrift.STRING, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.URL); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *RedirectShortURLResponse) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseResp() {
+		if err = oprot.WriteFieldBegin("BaseResp", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseResp.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
+func (p *RedirectShortURLResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RedirectShortURLResponse(%+v)", *p)
+
+}
+
+type AddShortURLRequest struct {
+	Short       *string `thrift:"Short,1,optional" form:"short" json:"short,omitempty"`
+	RedirectURL string  `thrift:"RedirectURL,2,required" form:"redirect_url,required" json:"redirect_url,required"`
+	Desp        *string `thrift:"Desp,3,optional" form:"desp" json:"desp,omitempty"`
+	Token       string  `thrift:"Token,255,required" form:"token,required" json:"token,required"`
+}
+
+func NewAddShortURLRequest() *AddShortURLRequest {
+	return &AddShortURLRequest{}
+}
+
+func (p *AddShortURLRequest) InitDefault() {
+}
+
+var AddShortURLRequest_Short_DEFAULT string
+
+func (p *AddShortURLRequest) GetShort() (v string) {
+	if !p.IsSetShort() {
+		return AddShortURLRequest_Short_DEFAULT
+	}
+	return *p.Short
+}
+
+func (p *AddShortURLRequest) GetRedirectURL() (v string) {
+	return p.RedirectURL
+}
+
+var AddShortURLRequest_Desp_DEFAULT string
+
+func (p *AddShortURLRequest) GetDesp() (v string) {
+	if !p.IsSetDesp() {
+		return AddShortURLRequest_Desp_DEFAULT
+	}
+	return *p.Desp
+}
+
+func (p *AddShortURLRequest) GetToken() (v string) {
+	return p.Token
+}
+
+var fieldIDToName_AddShortURLRequest = map[int16]string{
+	1:   "Short",
+	2:   "RedirectURL",
+	3:   "Desp",
+	255: "Token",
+}
+
+func (p *AddShortURLRequest) IsSetShort() bool {
+	return p.Short != nil
+}
+
+func (p *AddShortURLRequest) IsSetDesp() bool {
+	return p.Desp != nil
+}
+
+func (p *AddShortURLRequest) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetRedirectURL bool = false
+	var issetToken bool = false
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetRedirectURL = true
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 3:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 255:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetToken = true
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	if !issetRedirectURL {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetToken {
+		fieldId = 255
+		goto RequiredFieldNotSetError
+	}
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_AddShortURLRequest[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_AddShortURLRequest[fieldId]))
+}
+
+func (p *AddShortURLRequest) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field *string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.Short = _field
+	return nil
+}
+func (p *AddShortURLRequest) ReadField2(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.RedirectURL = _field
+	return nil
+}
+func (p *AddShortURLRequest) ReadField3(iprot thrift.TProtocol) error {
+
+	var _field *string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = &v
+	}
+	p.Desp = _field
+	return nil
+}
+func (p *AddShortURLRequest) ReadField255(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Token = _field
+	return nil
+}
+
+func (p *AddShortURLRequest) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("AddShortURLRequest"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *AddShortURLRequest) writeField1(oprot thrift.TProtocol) (err error) {
+	if p.IsSetShort() {
+		if err = oprot.WriteFieldBegin("Short", thrift.STRING, 1); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Short); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *AddShortURLRequest) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("RedirectURL", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.RedirectURL); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *AddShortURLRequest) writeField3(oprot thrift.TProtocol) (err error) {
+	if p.IsSetDesp() {
+		if err = oprot.WriteFieldBegin("Desp", thrift.STRING, 3); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteString(*p.Desp); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *AddShortURLRequest) writeField255(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Token", thrift.STRING, 255); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Token); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
+func (p *AddShortURLRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("AddShortURLRequest(%+v)", *p)
+
+}
+
+type AddShortURLResponse struct {
+	Short       string    `thrift:"Short,1" form:"short" json:"short"`
+	RedirectURL string    `thrift:"RedirectURL,2" form:"redirect_url" json:"redirect_url"`
+	BaseResp    *BaseResp `thrift:"BaseResp,255,optional" form:"BaseResp" json:"BaseResp,omitempty" query:"BaseResp"`
+}
+
+func NewAddShortURLResponse() *AddShortURLResponse {
+	return &AddShortURLResponse{}
+}
+
+func (p *AddShortURLResponse) InitDefault() {
+}
+
+func (p *AddShortURLResponse) GetShort() (v string) {
+	return p.Short
+}
+
+func (p *AddShortURLResponse) GetRedirectURL() (v string) {
+	return p.RedirectURL
+}
+
+var AddShortURLResponse_BaseResp_DEFAULT *BaseResp
+
+func (p *AddShortURLResponse) GetBaseResp() (v *BaseResp) {
+	if !p.IsSetBaseResp() {
+		return AddShortURLResponse_BaseResp_DEFAULT
+	}
+	return p.BaseResp
+}
+
+var fieldIDToName_AddShortURLResponse = map[int16]string{
+	1:   "Short",
+	2:   "RedirectURL",
+	255: "BaseResp",
+}
+
+func (p *AddShortURLResponse) IsSetBaseResp() bool {
+	return p.BaseResp != nil
+}
+
+func (p *AddShortURLResponse) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_AddShortURLResponse[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *AddShortURLResponse) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Short = _field
+	return nil
+}
+func (p *AddShortURLResponse) ReadField2(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.RedirectURL = _field
+	return nil
+}
+func (p *AddShortURLResponse) ReadField255(iprot thrift.TProtocol) error {
+	_field := NewBaseResp()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.BaseResp = _field
+	return nil
+}
+
+func (p *AddShortURLResponse) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("AddShortURLResponse"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *AddShortURLResponse) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Short", thrift.STRING, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Short); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *AddShortURLResponse) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("RedirectURL", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.RedirectURL); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *AddShortURLResponse) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseResp() {
+		if err = oprot.WriteFieldBegin("BaseResp", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseResp.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
+func (p *AddShortURLResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("AddShortURLResponse(%+v)", *p)
+
+}
+
+type DeleteShortURLRequest struct {
+	Short string `thrift:"Short,1,required" json:"Short,required" path:"url,required"`
+	Token string `thrift:"Token,2,required" form:"token,required" json:"token,required"`
+}
+
+func NewDeleteShortURLRequest() *DeleteShortURLRequest {
+	return &DeleteShortURLRequest{}
+}
+
+func (p *DeleteShortURLRequest) InitDefault() {
+}
+
+func (p *DeleteShortURLRequest) GetShort() (v string) {
+	return p.Short
+}
+
+func (p *DeleteShortURLRequest) GetToken() (v string) {
+	return p.Token
+}
+
+var fieldIDToName_DeleteShortURLRequest = map[int16]string{
+	1: "Short",
+	2: "Token",
+}
+
+func (p *DeleteShortURLRequest) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetShort bool = false
+	var issetToken bool = false
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetShort = true
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetToken = true
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	if !issetShort {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+
+	if !issetToken {
+		fieldId = 2
+		goto RequiredFieldNotSetError
+	}
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DeleteShortURLRequest[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_DeleteShortURLRequest[fieldId]))
+}
+
+func (p *DeleteShortURLRequest) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Short = _field
+	return nil
+}
+func (p *DeleteShortURLRequest) ReadField2(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Token = _field
+	return nil
+}
+
+func (p *DeleteShortURLRequest) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("DeleteShortURLRequest"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *DeleteShortURLRequest) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Short", thrift.STRING, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Short); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *DeleteShortURLRequest) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Token", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Token); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *DeleteShortURLRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("DeleteShortURLRequest(%+v)", *p)
+
+}
+
+type DeleteShortURLResponse struct {
+	Short       string    `thrift:"Short,1" form:"short" json:"short"`
+	RedirectURL string    `thrift:"RedirectURL,2" form:"redirect_url" json:"redirect_url"`
+	BaseResp    *BaseResp `thrift:"BaseResp,255,optional" form:"BaseResp" json:"BaseResp,omitempty" query:"BaseResp"`
+}
+
+func NewDeleteShortURLResponse() *DeleteShortURLResponse {
+	return &DeleteShortURLResponse{}
+}
+
+func (p *DeleteShortURLResponse) InitDefault() {
+}
+
+func (p *DeleteShortURLResponse) GetShort() (v string) {
+	return p.Short
+}
+
+func (p *DeleteShortURLResponse) GetRedirectURL() (v string) {
+	return p.RedirectURL
+}
+
+var DeleteShortURLResponse_BaseResp_DEFAULT *BaseResp
+
+func (p *DeleteShortURLResponse) GetBaseResp() (v *BaseResp) {
+	if !p.IsSetBaseResp() {
+		return DeleteShortURLResponse_BaseResp_DEFAULT
+	}
+	return p.BaseResp
+}
+
+var fieldIDToName_DeleteShortURLResponse = map[int16]string{
+	1:   "Short",
+	2:   "RedirectURL",
+	255: "BaseResp",
+}
+
+func (p *DeleteShortURLResponse) IsSetBaseResp() bool {
+	return p.BaseResp != nil
+}
+
+func (p *DeleteShortURLResponse) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 2:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField2(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_DeleteShortURLResponse[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *DeleteShortURLResponse) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Short = _field
+	return nil
+}
+func (p *DeleteShortURLResponse) ReadField2(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.RedirectURL = _field
+	return nil
+}
+func (p *DeleteShortURLResponse) ReadField255(iprot thrift.TProtocol) error {
+	_field := NewBaseResp()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.BaseResp = _field
+	return nil
+}
+
+func (p *DeleteShortURLResponse) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("DeleteShortURLResponse"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+		if err = p.writeField2(oprot); err != nil {
+			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *DeleteShortURLResponse) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Short", thrift.STRING, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Short); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *DeleteShortURLResponse) writeField2(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("RedirectURL", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.RedirectURL); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *DeleteShortURLResponse) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseResp() {
+		if err = oprot.WriteFieldBegin("BaseResp", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseResp.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
+func (p *DeleteShortURLResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("DeleteShortURLResponse(%+v)", *p)
+
+}
+
+type RefreshRequest struct {
+	Token string `thrift:"Token,1,required" form:"token,required" json:"token,required"`
+}
+
+func NewRefreshRequest() *RefreshRequest {
+	return &RefreshRequest{}
+}
+
+func (p *RefreshRequest) InitDefault() {
+}
+
+func (p *RefreshRequest) GetToken() (v string) {
+	return p.Token
+}
+
+var fieldIDToName_RefreshRequest = map[int16]string{
+	1: "Token",
+}
+
+func (p *RefreshRequest) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+	var issetToken bool = false
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRING {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+				issetToken = true
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	if !issetToken {
+		fieldId = 1
+		goto RequiredFieldNotSetError
+	}
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RefreshRequest[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+RequiredFieldNotSetError:
+	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_RefreshRequest[fieldId]))
+}
+
+func (p *RefreshRequest) ReadField1(iprot thrift.TProtocol) error {
+
+	var _field string
+	if v, err := iprot.ReadString(); err != nil {
+		return err
+	} else {
+		_field = v
+	}
+	p.Token = _field
+	return nil
+}
+
+func (p *RefreshRequest) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("RefreshRequest"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *RefreshRequest) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("Token", thrift.STRING, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Token); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *RefreshRequest) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RefreshRequest(%+v)", *p)
+
+}
+
+type RefreshResponse struct {
+	BaseResp *BaseResp `thrift:"BaseResp,255,optional" form:"BaseResp" json:"BaseResp,omitempty" query:"BaseResp"`
+}
+
+func NewRefreshResponse() *RefreshResponse {
+	return &RefreshResponse{}
+}
+
+func (p *RefreshResponse) InitDefault() {
+}
+
+var RefreshResponse_BaseResp_DEFAULT *BaseResp
+
+func (p *RefreshResponse) GetBaseResp() (v *BaseResp) {
+	if !p.IsSetBaseResp() {
+		return RefreshResponse_BaseResp_DEFAULT
+	}
+	return p.BaseResp
+}
+
+var fieldIDToName_RefreshResponse = map[int16]string{
+	255: "BaseResp",
+}
+
+func (p *RefreshResponse) IsSetBaseResp() bool {
+	return p.BaseResp != nil
+}
+
+func (p *RefreshResponse) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 255:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField255(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_RefreshResponse[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *RefreshResponse) ReadField255(iprot thrift.TProtocol) error {
+	_field := NewBaseResp()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.BaseResp = _field
+	return nil
+}
+
+func (p *RefreshResponse) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("RefreshResponse"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField255(oprot); err != nil {
+			fieldId = 255
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *RefreshResponse) writeField255(oprot thrift.TProtocol) (err error) {
+	if p.IsSetBaseResp() {
+		if err = oprot.WriteFieldBegin("BaseResp", thrift.STRUCT, 255); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.BaseResp.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 255 end error: ", p), err)
+}
+
+func (p *RefreshResponse) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RefreshResponse(%+v)", *p)
+
+}
+
+type ShortService interface {
+	Hello(ctx context.Context, name string) (r string, err error)
+
+	RedirectShortURL(ctx context.Context, request *RedirectShortURLRequest) (r *RedirectShortURLResponse, err error)
+
+	AddShortURL(ctx context.Context, request *AddShortURLRequest) (r *AddShortURLResponse, err error)
+
+	DeleteShortURL(ctx context.Context, request *DeleteShortURLRequest) (r *DeleteShortURLResponse, err error)
+
+	Refresh(ctx context.Context, request *RefreshRequest) (r *RefreshResponse, err error)
+}
+
+type ShortServiceClient struct {
 	c thrift.TClient
 }
 
-func NewHelloServiceClientFactory(t thrift.TTransport, f thrift.TProtocolFactory) *HelloServiceClient {
-	return &HelloServiceClient{
+func NewShortServiceClientFactory(t thrift.TTransport, f thrift.TProtocolFactory) *ShortServiceClient {
+	return &ShortServiceClient{
 		c: thrift.NewTStandardClient(f.GetProtocol(t), f.GetProtocol(t)),
 	}
 }
 
-func NewHelloServiceClientProtocol(t thrift.TTransport, iprot thrift.TProtocol, oprot thrift.TProtocol) *HelloServiceClient {
-	return &HelloServiceClient{
+func NewShortServiceClientProtocol(t thrift.TTransport, iprot thrift.TProtocol, oprot thrift.TProtocol) *ShortServiceClient {
+	return &ShortServiceClient{
 		c: thrift.NewTStandardClient(iprot, oprot),
 	}
 }
 
-func NewHelloServiceClient(c thrift.TClient) *HelloServiceClient {
-	return &HelloServiceClient{
+func NewShortServiceClient(c thrift.TClient) *ShortServiceClient {
+	return &ShortServiceClient{
 		c: c,
 	}
 }
 
-func (p *HelloServiceClient) Client_() thrift.TClient {
+func (p *ShortServiceClient) Client_() thrift.TClient {
 	return p.c
 }
 
-func (p *HelloServiceClient) Hello(ctx context.Context, name string) (r string, err error) {
-	var _args HelloServiceHelloArgs
+func (p *ShortServiceClient) Hello(ctx context.Context, name string) (r string, err error) {
+	var _args ShortServiceHelloArgs
 	_args.Name = name
-	var _result HelloServiceHelloResult
+	var _result ShortServiceHelloResult
 	if err = p.Client_().Call(ctx, "Hello", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil
 }
-
-type HelloServiceProcessor struct {
-	processorMap map[string]thrift.TProcessorFunction
-	handler      HelloService
+func (p *ShortServiceClient) RedirectShortURL(ctx context.Context, request *RedirectShortURLRequest) (r *RedirectShortURLResponse, err error) {
+	var _args ShortServiceRedirectShortURLArgs
+	_args.Request = request
+	var _result ShortServiceRedirectShortURLResult
+	if err = p.Client_().Call(ctx, "RedirectShortURL", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+func (p *ShortServiceClient) AddShortURL(ctx context.Context, request *AddShortURLRequest) (r *AddShortURLResponse, err error) {
+	var _args ShortServiceAddShortURLArgs
+	_args.Request = request
+	var _result ShortServiceAddShortURLResult
+	if err = p.Client_().Call(ctx, "AddShortURL", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+func (p *ShortServiceClient) DeleteShortURL(ctx context.Context, request *DeleteShortURLRequest) (r *DeleteShortURLResponse, err error) {
+	var _args ShortServiceDeleteShortURLArgs
+	_args.Request = request
+	var _result ShortServiceDeleteShortURLResult
+	if err = p.Client_().Call(ctx, "DeleteShortURL", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+func (p *ShortServiceClient) Refresh(ctx context.Context, request *RefreshRequest) (r *RefreshResponse, err error) {
+	var _args ShortServiceRefreshArgs
+	_args.Request = request
+	var _result ShortServiceRefreshResult
+	if err = p.Client_().Call(ctx, "Refresh", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
 }
 
-func (p *HelloServiceProcessor) AddToProcessorMap(key string, processor thrift.TProcessorFunction) {
+type ShortServiceProcessor struct {
+	processorMap map[string]thrift.TProcessorFunction
+	handler      ShortService
+}
+
+func (p *ShortServiceProcessor) AddToProcessorMap(key string, processor thrift.TProcessorFunction) {
 	p.processorMap[key] = processor
 }
 
-func (p *HelloServiceProcessor) GetProcessorFunction(key string) (processor thrift.TProcessorFunction, ok bool) {
+func (p *ShortServiceProcessor) GetProcessorFunction(key string) (processor thrift.TProcessorFunction, ok bool) {
 	processor, ok = p.processorMap[key]
 	return processor, ok
 }
 
-func (p *HelloServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFunction {
+func (p *ShortServiceProcessor) ProcessorMap() map[string]thrift.TProcessorFunction {
 	return p.processorMap
 }
 
-func NewHelloServiceProcessor(handler HelloService) *HelloServiceProcessor {
-	self := &HelloServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
-	self.AddToProcessorMap("Hello", &helloServiceProcessorHello{handler: handler})
+func NewShortServiceProcessor(handler ShortService) *ShortServiceProcessor {
+	self := &ShortServiceProcessor{handler: handler, processorMap: make(map[string]thrift.TProcessorFunction)}
+	self.AddToProcessorMap("Hello", &shortServiceProcessorHello{handler: handler})
+	self.AddToProcessorMap("RedirectShortURL", &shortServiceProcessorRedirectShortURL{handler: handler})
+	self.AddToProcessorMap("AddShortURL", &shortServiceProcessorAddShortURL{handler: handler})
+	self.AddToProcessorMap("DeleteShortURL", &shortServiceProcessorDeleteShortURL{handler: handler})
+	self.AddToProcessorMap("Refresh", &shortServiceProcessorRefresh{handler: handler})
 	return self
 }
-func (p *HelloServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+func (p *ShortServiceProcessor) Process(ctx context.Context, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
 	name, _, seqId, err := iprot.ReadMessageBegin()
 	if err != nil {
 		return false, err
@@ -89,12 +1957,12 @@ func (p *HelloServiceProcessor) Process(ctx context.Context, iprot, oprot thrift
 	return false, x
 }
 
-type helloServiceProcessorHello struct {
-	handler HelloService
+type shortServiceProcessorHello struct {
+	handler ShortService
 }
 
-func (p *helloServiceProcessorHello) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
-	args := HelloServiceHelloArgs{}
+func (p *shortServiceProcessorHello) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := ShortServiceHelloArgs{}
 	if err = args.Read(iprot); err != nil {
 		iprot.ReadMessageEnd()
 		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
@@ -107,7 +1975,7 @@ func (p *helloServiceProcessorHello) Process(ctx context.Context, seqId int32, i
 
 	iprot.ReadMessageEnd()
 	var err2 error
-	result := HelloServiceHelloResult{}
+	result := ShortServiceHelloResult{}
 	var retval string
 	if retval, err2 = p.handler.Hello(ctx, args.Name); err2 != nil {
 		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing Hello: "+err2.Error())
@@ -137,26 +2005,218 @@ func (p *helloServiceProcessorHello) Process(ctx context.Context, seqId int32, i
 	return true, err
 }
 
-type HelloServiceHelloArgs struct {
+type shortServiceProcessorRedirectShortURL struct {
+	handler ShortService
+}
+
+func (p *shortServiceProcessorRedirectShortURL) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := ShortServiceRedirectShortURLArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("RedirectShortURL", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := ShortServiceRedirectShortURLResult{}
+	var retval *RedirectShortURLResponse
+	if retval, err2 = p.handler.RedirectShortURL(ctx, args.Request); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing RedirectShortURL: "+err2.Error())
+		oprot.WriteMessageBegin("RedirectShortURL", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("RedirectShortURL", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type shortServiceProcessorAddShortURL struct {
+	handler ShortService
+}
+
+func (p *shortServiceProcessorAddShortURL) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := ShortServiceAddShortURLArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("AddShortURL", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := ShortServiceAddShortURLResult{}
+	var retval *AddShortURLResponse
+	if retval, err2 = p.handler.AddShortURL(ctx, args.Request); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing AddShortURL: "+err2.Error())
+		oprot.WriteMessageBegin("AddShortURL", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("AddShortURL", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type shortServiceProcessorDeleteShortURL struct {
+	handler ShortService
+}
+
+func (p *shortServiceProcessorDeleteShortURL) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := ShortServiceDeleteShortURLArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("DeleteShortURL", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := ShortServiceDeleteShortURLResult{}
+	var retval *DeleteShortURLResponse
+	if retval, err2 = p.handler.DeleteShortURL(ctx, args.Request); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing DeleteShortURL: "+err2.Error())
+		oprot.WriteMessageBegin("DeleteShortURL", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("DeleteShortURL", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type shortServiceProcessorRefresh struct {
+	handler ShortService
+}
+
+func (p *shortServiceProcessorRefresh) Process(ctx context.Context, seqId int32, iprot, oprot thrift.TProtocol) (success bool, err thrift.TException) {
+	args := ShortServiceRefreshArgs{}
+	if err = args.Read(iprot); err != nil {
+		iprot.ReadMessageEnd()
+		x := thrift.NewTApplicationException(thrift.PROTOCOL_ERROR, err.Error())
+		oprot.WriteMessageBegin("Refresh", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return false, err
+	}
+
+	iprot.ReadMessageEnd()
+	var err2 error
+	result := ShortServiceRefreshResult{}
+	var retval *RefreshResponse
+	if retval, err2 = p.handler.Refresh(ctx, args.Request); err2 != nil {
+		x := thrift.NewTApplicationException(thrift.INTERNAL_ERROR, "Internal error processing Refresh: "+err2.Error())
+		oprot.WriteMessageBegin("Refresh", thrift.EXCEPTION, seqId)
+		x.Write(oprot)
+		oprot.WriteMessageEnd()
+		oprot.Flush(ctx)
+		return true, err2
+	} else {
+		result.Success = retval
+	}
+	if err2 = oprot.WriteMessageBegin("Refresh", thrift.REPLY, seqId); err2 != nil {
+		err = err2
+	}
+	if err2 = result.Write(oprot); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.WriteMessageEnd(); err == nil && err2 != nil {
+		err = err2
+	}
+	if err2 = oprot.Flush(ctx); err == nil && err2 != nil {
+		err = err2
+	}
+	if err != nil {
+		return
+	}
+	return true, err
+}
+
+type ShortServiceHelloArgs struct {
 	Name string `thrift:"name,1"`
 }
 
-func NewHelloServiceHelloArgs() *HelloServiceHelloArgs {
-	return &HelloServiceHelloArgs{}
+func NewShortServiceHelloArgs() *ShortServiceHelloArgs {
+	return &ShortServiceHelloArgs{}
 }
 
-func (p *HelloServiceHelloArgs) InitDefault() {
+func (p *ShortServiceHelloArgs) InitDefault() {
 }
 
-func (p *HelloServiceHelloArgs) GetName() (v string) {
+func (p *ShortServiceHelloArgs) GetName() (v string) {
 	return p.Name
 }
 
-var fieldIDToName_HelloServiceHelloArgs = map[int16]string{
+var fieldIDToName_ShortServiceHelloArgs = map[int16]string{
 	1: "name",
 }
 
-func (p *HelloServiceHelloArgs) Read(iprot thrift.TProtocol) (err error) {
+func (p *ShortServiceHelloArgs) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -202,7 +2262,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_HelloServiceHelloArgs[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceHelloArgs[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -212,7 +2272,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *HelloServiceHelloArgs) ReadField1(iprot thrift.TProtocol) error {
+func (p *ShortServiceHelloArgs) ReadField1(iprot thrift.TProtocol) error {
 
 	var _field string
 	if v, err := iprot.ReadString(); err != nil {
@@ -224,7 +2284,7 @@ func (p *HelloServiceHelloArgs) ReadField1(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *HelloServiceHelloArgs) Write(oprot thrift.TProtocol) (err error) {
+func (p *ShortServiceHelloArgs) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("Hello_args"); err != nil {
 		goto WriteStructBeginError
@@ -252,7 +2312,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *HelloServiceHelloArgs) writeField1(oprot thrift.TProtocol) (err error) {
+func (p *ShortServiceHelloArgs) writeField1(oprot thrift.TProtocol) (err error) {
 	if err = oprot.WriteFieldBegin("name", thrift.STRING, 1); err != nil {
 		goto WriteFieldBeginError
 	}
@@ -269,43 +2329,43 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
 }
 
-func (p *HelloServiceHelloArgs) String() string {
+func (p *ShortServiceHelloArgs) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("HelloServiceHelloArgs(%+v)", *p)
+	return fmt.Sprintf("ShortServiceHelloArgs(%+v)", *p)
 
 }
 
-type HelloServiceHelloResult struct {
+type ShortServiceHelloResult struct {
 	Success *string `thrift:"success,0,optional"`
 }
 
-func NewHelloServiceHelloResult() *HelloServiceHelloResult {
-	return &HelloServiceHelloResult{}
+func NewShortServiceHelloResult() *ShortServiceHelloResult {
+	return &ShortServiceHelloResult{}
 }
 
-func (p *HelloServiceHelloResult) InitDefault() {
+func (p *ShortServiceHelloResult) InitDefault() {
 }
 
-var HelloServiceHelloResult_Success_DEFAULT string
+var ShortServiceHelloResult_Success_DEFAULT string
 
-func (p *HelloServiceHelloResult) GetSuccess() (v string) {
+func (p *ShortServiceHelloResult) GetSuccess() (v string) {
 	if !p.IsSetSuccess() {
-		return HelloServiceHelloResult_Success_DEFAULT
+		return ShortServiceHelloResult_Success_DEFAULT
 	}
 	return *p.Success
 }
 
-var fieldIDToName_HelloServiceHelloResult = map[int16]string{
+var fieldIDToName_ShortServiceHelloResult = map[int16]string{
 	0: "success",
 }
 
-func (p *HelloServiceHelloResult) IsSetSuccess() bool {
+func (p *ShortServiceHelloResult) IsSetSuccess() bool {
 	return p.Success != nil
 }
 
-func (p *HelloServiceHelloResult) Read(iprot thrift.TProtocol) (err error) {
+func (p *ShortServiceHelloResult) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
@@ -351,7 +2411,7 @@ ReadStructBeginError:
 ReadFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
 ReadFieldError:
-	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_HelloServiceHelloResult[fieldId]), err)
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceHelloResult[fieldId]), err)
 SkipFieldError:
 	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
 
@@ -361,7 +2421,7 @@ ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
 }
 
-func (p *HelloServiceHelloResult) ReadField0(iprot thrift.TProtocol) error {
+func (p *ShortServiceHelloResult) ReadField0(iprot thrift.TProtocol) error {
 
 	var _field *string
 	if v, err := iprot.ReadString(); err != nil {
@@ -373,7 +2433,7 @@ func (p *HelloServiceHelloResult) ReadField0(iprot thrift.TProtocol) error {
 	return nil
 }
 
-func (p *HelloServiceHelloResult) Write(oprot thrift.TProtocol) (err error) {
+func (p *ShortServiceHelloResult) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("Hello_result"); err != nil {
 		goto WriteStructBeginError
@@ -401,7 +2461,7 @@ WriteStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
 }
 
-func (p *HelloServiceHelloResult) writeField0(oprot thrift.TProtocol) (err error) {
+func (p *ShortServiceHelloResult) writeField0(oprot thrift.TProtocol) (err error) {
 	if p.IsSetSuccess() {
 		if err = oprot.WriteFieldBegin("success", thrift.STRING, 0); err != nil {
 			goto WriteFieldBeginError
@@ -420,10 +2480,1186 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
 }
 
-func (p *HelloServiceHelloResult) String() string {
+func (p *ShortServiceHelloResult) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("HelloServiceHelloResult(%+v)", *p)
+	return fmt.Sprintf("ShortServiceHelloResult(%+v)", *p)
+
+}
+
+type ShortServiceRedirectShortURLArgs struct {
+	Request *RedirectShortURLRequest `thrift:"request,1"`
+}
+
+func NewShortServiceRedirectShortURLArgs() *ShortServiceRedirectShortURLArgs {
+	return &ShortServiceRedirectShortURLArgs{}
+}
+
+func (p *ShortServiceRedirectShortURLArgs) InitDefault() {
+}
+
+var ShortServiceRedirectShortURLArgs_Request_DEFAULT *RedirectShortURLRequest
+
+func (p *ShortServiceRedirectShortURLArgs) GetRequest() (v *RedirectShortURLRequest) {
+	if !p.IsSetRequest() {
+		return ShortServiceRedirectShortURLArgs_Request_DEFAULT
+	}
+	return p.Request
+}
+
+var fieldIDToName_ShortServiceRedirectShortURLArgs = map[int16]string{
+	1: "request",
+}
+
+func (p *ShortServiceRedirectShortURLArgs) IsSetRequest() bool {
+	return p.Request != nil
+}
+
+func (p *ShortServiceRedirectShortURLArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceRedirectShortURLArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ShortServiceRedirectShortURLArgs) ReadField1(iprot thrift.TProtocol) error {
+	_field := NewRedirectShortURLRequest()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Request = _field
+	return nil
+}
+
+func (p *ShortServiceRedirectShortURLArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("RedirectShortURL_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ShortServiceRedirectShortURLArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("request", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Request.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *ShortServiceRedirectShortURLArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ShortServiceRedirectShortURLArgs(%+v)", *p)
+
+}
+
+type ShortServiceRedirectShortURLResult struct {
+	Success *RedirectShortURLResponse `thrift:"success,0,optional"`
+}
+
+func NewShortServiceRedirectShortURLResult() *ShortServiceRedirectShortURLResult {
+	return &ShortServiceRedirectShortURLResult{}
+}
+
+func (p *ShortServiceRedirectShortURLResult) InitDefault() {
+}
+
+var ShortServiceRedirectShortURLResult_Success_DEFAULT *RedirectShortURLResponse
+
+func (p *ShortServiceRedirectShortURLResult) GetSuccess() (v *RedirectShortURLResponse) {
+	if !p.IsSetSuccess() {
+		return ShortServiceRedirectShortURLResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+var fieldIDToName_ShortServiceRedirectShortURLResult = map[int16]string{
+	0: "success",
+}
+
+func (p *ShortServiceRedirectShortURLResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ShortServiceRedirectShortURLResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceRedirectShortURLResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ShortServiceRedirectShortURLResult) ReadField0(iprot thrift.TProtocol) error {
+	_field := NewRedirectShortURLResponse()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Success = _field
+	return nil
+}
+
+func (p *ShortServiceRedirectShortURLResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("RedirectShortURL_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ShortServiceRedirectShortURLResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *ShortServiceRedirectShortURLResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ShortServiceRedirectShortURLResult(%+v)", *p)
+
+}
+
+type ShortServiceAddShortURLArgs struct {
+	Request *AddShortURLRequest `thrift:"request,1"`
+}
+
+func NewShortServiceAddShortURLArgs() *ShortServiceAddShortURLArgs {
+	return &ShortServiceAddShortURLArgs{}
+}
+
+func (p *ShortServiceAddShortURLArgs) InitDefault() {
+}
+
+var ShortServiceAddShortURLArgs_Request_DEFAULT *AddShortURLRequest
+
+func (p *ShortServiceAddShortURLArgs) GetRequest() (v *AddShortURLRequest) {
+	if !p.IsSetRequest() {
+		return ShortServiceAddShortURLArgs_Request_DEFAULT
+	}
+	return p.Request
+}
+
+var fieldIDToName_ShortServiceAddShortURLArgs = map[int16]string{
+	1: "request",
+}
+
+func (p *ShortServiceAddShortURLArgs) IsSetRequest() bool {
+	return p.Request != nil
+}
+
+func (p *ShortServiceAddShortURLArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceAddShortURLArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ShortServiceAddShortURLArgs) ReadField1(iprot thrift.TProtocol) error {
+	_field := NewAddShortURLRequest()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Request = _field
+	return nil
+}
+
+func (p *ShortServiceAddShortURLArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("AddShortURL_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ShortServiceAddShortURLArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("request", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Request.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *ShortServiceAddShortURLArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ShortServiceAddShortURLArgs(%+v)", *p)
+
+}
+
+type ShortServiceAddShortURLResult struct {
+	Success *AddShortURLResponse `thrift:"success,0,optional"`
+}
+
+func NewShortServiceAddShortURLResult() *ShortServiceAddShortURLResult {
+	return &ShortServiceAddShortURLResult{}
+}
+
+func (p *ShortServiceAddShortURLResult) InitDefault() {
+}
+
+var ShortServiceAddShortURLResult_Success_DEFAULT *AddShortURLResponse
+
+func (p *ShortServiceAddShortURLResult) GetSuccess() (v *AddShortURLResponse) {
+	if !p.IsSetSuccess() {
+		return ShortServiceAddShortURLResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+var fieldIDToName_ShortServiceAddShortURLResult = map[int16]string{
+	0: "success",
+}
+
+func (p *ShortServiceAddShortURLResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ShortServiceAddShortURLResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceAddShortURLResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ShortServiceAddShortURLResult) ReadField0(iprot thrift.TProtocol) error {
+	_field := NewAddShortURLResponse()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Success = _field
+	return nil
+}
+
+func (p *ShortServiceAddShortURLResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("AddShortURL_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ShortServiceAddShortURLResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *ShortServiceAddShortURLResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ShortServiceAddShortURLResult(%+v)", *p)
+
+}
+
+type ShortServiceDeleteShortURLArgs struct {
+	Request *DeleteShortURLRequest `thrift:"request,1"`
+}
+
+func NewShortServiceDeleteShortURLArgs() *ShortServiceDeleteShortURLArgs {
+	return &ShortServiceDeleteShortURLArgs{}
+}
+
+func (p *ShortServiceDeleteShortURLArgs) InitDefault() {
+}
+
+var ShortServiceDeleteShortURLArgs_Request_DEFAULT *DeleteShortURLRequest
+
+func (p *ShortServiceDeleteShortURLArgs) GetRequest() (v *DeleteShortURLRequest) {
+	if !p.IsSetRequest() {
+		return ShortServiceDeleteShortURLArgs_Request_DEFAULT
+	}
+	return p.Request
+}
+
+var fieldIDToName_ShortServiceDeleteShortURLArgs = map[int16]string{
+	1: "request",
+}
+
+func (p *ShortServiceDeleteShortURLArgs) IsSetRequest() bool {
+	return p.Request != nil
+}
+
+func (p *ShortServiceDeleteShortURLArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceDeleteShortURLArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ShortServiceDeleteShortURLArgs) ReadField1(iprot thrift.TProtocol) error {
+	_field := NewDeleteShortURLRequest()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Request = _field
+	return nil
+}
+
+func (p *ShortServiceDeleteShortURLArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("DeleteShortURL_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ShortServiceDeleteShortURLArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("request", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Request.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *ShortServiceDeleteShortURLArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ShortServiceDeleteShortURLArgs(%+v)", *p)
+
+}
+
+type ShortServiceDeleteShortURLResult struct {
+	Success *DeleteShortURLResponse `thrift:"success,0,optional"`
+}
+
+func NewShortServiceDeleteShortURLResult() *ShortServiceDeleteShortURLResult {
+	return &ShortServiceDeleteShortURLResult{}
+}
+
+func (p *ShortServiceDeleteShortURLResult) InitDefault() {
+}
+
+var ShortServiceDeleteShortURLResult_Success_DEFAULT *DeleteShortURLResponse
+
+func (p *ShortServiceDeleteShortURLResult) GetSuccess() (v *DeleteShortURLResponse) {
+	if !p.IsSetSuccess() {
+		return ShortServiceDeleteShortURLResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+var fieldIDToName_ShortServiceDeleteShortURLResult = map[int16]string{
+	0: "success",
+}
+
+func (p *ShortServiceDeleteShortURLResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ShortServiceDeleteShortURLResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceDeleteShortURLResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ShortServiceDeleteShortURLResult) ReadField0(iprot thrift.TProtocol) error {
+	_field := NewDeleteShortURLResponse()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Success = _field
+	return nil
+}
+
+func (p *ShortServiceDeleteShortURLResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("DeleteShortURL_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ShortServiceDeleteShortURLResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *ShortServiceDeleteShortURLResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ShortServiceDeleteShortURLResult(%+v)", *p)
+
+}
+
+type ShortServiceRefreshArgs struct {
+	Request *RefreshRequest `thrift:"request,1"`
+}
+
+func NewShortServiceRefreshArgs() *ShortServiceRefreshArgs {
+	return &ShortServiceRefreshArgs{}
+}
+
+func (p *ShortServiceRefreshArgs) InitDefault() {
+}
+
+var ShortServiceRefreshArgs_Request_DEFAULT *RefreshRequest
+
+func (p *ShortServiceRefreshArgs) GetRequest() (v *RefreshRequest) {
+	if !p.IsSetRequest() {
+		return ShortServiceRefreshArgs_Request_DEFAULT
+	}
+	return p.Request
+}
+
+var fieldIDToName_ShortServiceRefreshArgs = map[int16]string{
+	1: "request",
+}
+
+func (p *ShortServiceRefreshArgs) IsSetRequest() bool {
+	return p.Request != nil
+}
+
+func (p *ShortServiceRefreshArgs) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 1:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField1(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceRefreshArgs[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ShortServiceRefreshArgs) ReadField1(iprot thrift.TProtocol) error {
+	_field := NewRefreshRequest()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Request = _field
+	return nil
+}
+
+func (p *ShortServiceRefreshArgs) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("Refresh_args"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField1(oprot); err != nil {
+			fieldId = 1
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ShortServiceRefreshArgs) writeField1(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("request", thrift.STRUCT, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := p.Request.Write(oprot); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 1 end error: ", p), err)
+}
+
+func (p *ShortServiceRefreshArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ShortServiceRefreshArgs(%+v)", *p)
+
+}
+
+type ShortServiceRefreshResult struct {
+	Success *RefreshResponse `thrift:"success,0,optional"`
+}
+
+func NewShortServiceRefreshResult() *ShortServiceRefreshResult {
+	return &ShortServiceRefreshResult{}
+}
+
+func (p *ShortServiceRefreshResult) InitDefault() {
+}
+
+var ShortServiceRefreshResult_Success_DEFAULT *RefreshResponse
+
+func (p *ShortServiceRefreshResult) GetSuccess() (v *RefreshResponse) {
+	if !p.IsSetSuccess() {
+		return ShortServiceRefreshResult_Success_DEFAULT
+	}
+	return p.Success
+}
+
+var fieldIDToName_ShortServiceRefreshResult = map[int16]string{
+	0: "success",
+}
+
+func (p *ShortServiceRefreshResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *ShortServiceRefreshResult) Read(iprot thrift.TProtocol) (err error) {
+
+	var fieldTypeId thrift.TType
+	var fieldId int16
+
+	if _, err = iprot.ReadStructBegin(); err != nil {
+		goto ReadStructBeginError
+	}
+
+	for {
+		_, fieldTypeId, fieldId, err = iprot.ReadFieldBegin()
+		if err != nil {
+			goto ReadFieldBeginError
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+
+		switch fieldId {
+		case 0:
+			if fieldTypeId == thrift.STRUCT {
+				if err = p.ReadField0(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		default:
+			if err = iprot.Skip(fieldTypeId); err != nil {
+				goto SkipFieldError
+			}
+		}
+		if err = iprot.ReadFieldEnd(); err != nil {
+			goto ReadFieldEndError
+		}
+	}
+	if err = iprot.ReadStructEnd(); err != nil {
+		goto ReadStructEndError
+	}
+
+	return nil
+ReadStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
+ReadFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d begin error: ", p, fieldId), err)
+ReadFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T read field %d '%s' error: ", p, fieldId, fieldIDToName_ShortServiceRefreshResult[fieldId]), err)
+SkipFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T field %d skip type %d error: ", p, fieldId, fieldTypeId), err)
+
+ReadFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
+ReadStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
+}
+
+func (p *ShortServiceRefreshResult) ReadField0(iprot thrift.TProtocol) error {
+	_field := NewRefreshResponse()
+	if err := _field.Read(iprot); err != nil {
+		return err
+	}
+	p.Success = _field
+	return nil
+}
+
+func (p *ShortServiceRefreshResult) Write(oprot thrift.TProtocol) (err error) {
+	var fieldId int16
+	if err = oprot.WriteStructBegin("Refresh_result"); err != nil {
+		goto WriteStructBeginError
+	}
+	if p != nil {
+		if err = p.writeField0(oprot); err != nil {
+			fieldId = 0
+			goto WriteFieldError
+		}
+	}
+	if err = oprot.WriteFieldStop(); err != nil {
+		goto WriteFieldStopError
+	}
+	if err = oprot.WriteStructEnd(); err != nil {
+		goto WriteStructEndError
+	}
+	return nil
+WriteStructBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct begin error: ", p), err)
+WriteFieldError:
+	return thrift.PrependError(fmt.Sprintf("%T write field %d error: ", p, fieldId), err)
+WriteFieldStopError:
+	return thrift.PrependError(fmt.Sprintf("%T write field stop error: ", p), err)
+WriteStructEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write struct end error: ", p), err)
+}
+
+func (p *ShortServiceRefreshResult) writeField0(oprot thrift.TProtocol) (err error) {
+	if p.IsSetSuccess() {
+		if err = oprot.WriteFieldBegin("success", thrift.STRUCT, 0); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := p.Success.Write(oprot); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 0 end error: ", p), err)
+}
+
+func (p *ShortServiceRefreshResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("ShortServiceRefreshResult(%+v)", *p)
 
 }

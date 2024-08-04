@@ -1,10 +1,15 @@
 module github.com/mcoder2014/simple_short_url
 
-go 1.22.4
+go 1.21
+
+toolchain go1.21.11
 
 require (
 	github.com/apache/thrift v0.20.0
 	github.com/cloudwego/hertz v0.9.2
+	github.com/hertz-contrib/logger/logrus v1.0.1
+	github.com/sirupsen/logrus v1.9.3
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
 require (
@@ -24,6 +29,8 @@ require (
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect
-	golang.org/x/sys v0.0.0-20220412211240-33da011f77ad // indirect
+	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 )
+
+replace github.com/apache/thrift => github.com/apache/thrift v0.13.0

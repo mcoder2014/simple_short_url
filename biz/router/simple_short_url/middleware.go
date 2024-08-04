@@ -5,3 +5,33 @@ package simple_short_url
 import (
 	"github.com/cloudwego/hertz/pkg/app"
 )
+
+func rootMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _redirectshorturlMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _sMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _addshorturlMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _deleteshorturlMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _refreshMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
