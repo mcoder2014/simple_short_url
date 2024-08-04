@@ -4,10 +4,12 @@ package simple_short_url
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"github.com/mcoder2014/simple_short_url/biz/config"
 	"github.com/mcoder2014/simple_short_url/biz/domain/service"
 	"github.com/mcoder2014/simple_short_url/biz/model/simple_short_url"
 	"github.com/mcoder2014/simple_short_url/util"
@@ -84,7 +86,8 @@ func AddShortURL(ctx context.Context, c *app.RequestContext) {
 	hlog.CtxInfof(ctx, "add short url success, short=%v long=%v", cfg.Short, cfg.Long)
 
 	resp := new(simple_short_url.AddShortURLResponse)
-	resp.Short = cfg.Short
+	resp.Short = config.GetConfig().BaseURL + "/s/" + short
+	resp.Code = short
 	resp.RedirectURL = cfg.Long
 	c.JSON(consts.StatusOK, resp)
 }
@@ -100,9 +103,19 @@ func DeleteShortURL(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(simple_short_url.DeleteShortURLResponse)
-	resp.BaseResp = &simple_short_url.BaseResp{StatusMessage: "not implemented"}
+	if err = CheckToken(req.GetToken()); err != nil {
+		c.JSON(consts.StatusBadRequest, &simple_short_url.AddShortURLResponse{BaseResp: &simple_short_url.BaseResp{StatusMessage: err.Error()}})
+		return
+	}
 
+	err = defaultShortService.DeleteConfig(ctx, req.GetShort())
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, &simple_short_url.AddShortURLResponse{BaseResp: &simple_short_url.BaseResp{StatusMessage: err.Error()}})
+		return
+	}
+
+	resp := new(simple_short_url.DeleteShortURLResponse)
+	resp.BaseResp = &simple_short_url.BaseResp{StatusMessage: "success"}
 	c.JSON(consts.StatusOK, resp)
 }
 
@@ -127,5 +140,41 @@ func Refresh(ctx context.Context, c *app.RequestContext) {
 		hlog.CtxWarnf(ctx, "refresh short url failed, err=%v", err)
 	}
 	resp := new(simple_short_url.RefreshResponse)
+	c.JSON(consts.StatusOK, resp)
+}
+
+// ListShortURL .
+// @router /s/list [GET]
+func ListShortURL(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req simple_short_url.ListShortURLRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+	if err = CheckToken(req.GetToken()); err != nil {
+		c.JSON(consts.StatusBadRequest, &simple_short_url.AddShortURLResponse{BaseResp: &simple_short_url.BaseResp{StatusMessage: err.Error()}})
+		return
+	}
+
+	configs, hasMore, err := defaultShortService.ListConfig(ctx, int(req.Offset), int(req.Limit))
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, &simple_short_url.AddShortURLResponse{BaseResp: &simple_short_url.BaseResp{StatusMessage: err.Error()}})
+	}
+	resp := new(simple_short_url.ListShortURLResponse)
+
+	var res []*simple_short_url.ShortURL
+	for _, c := range configs {
+		res = append(res, &simple_short_url.ShortURL{
+			Short:      fmt.Sprintf("%s/s/%s", config.GetConfig().BaseURL, c.Short),
+			Long:       c.Long,
+			Desp:       c.Desp,
+			Code:       c.Short,
+			CreateTime: c.CreateTime,
+		})
+	}
+	resp.ShortURLs = res
+	resp.HasMore = hasMore
 	c.JSON(consts.StatusOK, resp)
 }

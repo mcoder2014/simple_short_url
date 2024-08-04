@@ -1,0 +1,2 @@
+base_url: http://demo.domain.com
+short_url_file: ./conf/short.json

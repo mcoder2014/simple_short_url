@@ -6,9 +6,12 @@ import (
 	"fmt"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/mcoder2014/simple_short_url/biz/config"
 	"github.com/mcoder2014/simple_short_url/biz/domain/model"
+	"github.com/samber/lo"
 )
 
 type ShortService struct {
@@ -17,10 +20,6 @@ type ShortService struct {
 }
 
 var shortConfigMutex sync.Mutex
-
-const (
-	shortConfigPath = "./conf/short.json"
-)
 
 func NewShortService() (*ShortService, error) {
 	s := &ShortService{}
@@ -58,10 +57,11 @@ func (s *ShortService) AddConfig(ctx context.Context, short, long string, desp s
 	}
 
 	cfg := &model.ShortURLConfig{
-		Short:  short,
-		Long:   long,
-		Enable: true,
-		Desp:   desp,
+		Short:      short,
+		Long:       long,
+		Enable:     true,
+		Desp:       desp,
+		CreateTime: time.Now().Unix(),
 	}
 
 	s.ShortCache[short] = cfg
@@ -88,29 +88,73 @@ func (s *ShortService) Refresh(ctx context.Context) error {
 }
 
 func (s *ShortService) loadConfig() ([]*model.ShortURLConfig, error) {
-	var config []*model.ShortURLConfig
+	var configs []*model.ShortURLConfig
 
 	shortConfigMutex.Lock()
 	defer shortConfigMutex.Unlock()
 
-	content, err := os.ReadFile(shortConfigPath)
+	content, err := os.ReadFile(config.GetConfig().ShortURLFile)
 	if err != nil {
-		return nil, fmt.Errorf("read short config file: %w", err)
+		return nil, fmt.Errorf("read short configs file: %w", err)
 	}
-	err = json.Unmarshal(content, &config)
+	err = json.Unmarshal(content, &configs)
 	if err != nil {
 		return nil, err
 	}
-	return config, nil
+	return configs, nil
 }
 
-func (s *ShortService) saveConfig(config []*model.ShortURLConfig) error {
+func (s *ShortService) saveConfig(configs []*model.ShortURLConfig) error {
 	shortConfigMutex.Lock()
 	defer shortConfigMutex.Unlock()
 
-	content, err := json.Marshal(config)
+	content, err := json.Marshal(configs)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(shortConfigPath, content, 0644)
+	return os.WriteFile(config.GetConfig().ShortURLFile, content, 0644)
+}
+
+func (s *ShortService) ListConfig(ctx context.Context, offset, limit int) ([]*model.ShortURLConfig, bool, error) {
+	if offset > len(s.ShortCache) {
+		return nil, false, nil
+	}
+
+	configs, err := s.loadConfig()
+	if err != nil {
+		return nil, false, err
+	}
+
+	end := lo.Min([]int{offset + limit, len(configs)})
+	return configs[offset:end], end < len(configs), nil
+}
+
+func (s *ShortService) DeleteConfig(ctx context.Context, short string) (err error) {
+	s.ShortCacheMutex.Lock()
+	defer s.ShortCacheMutex.Unlock()
+
+	if _, ok := s.ShortCache[short]; !ok {
+		hlog.CtxInfof(ctx, "short=%v is not found", short)
+		return nil
+	}
+
+	defer func() {
+		if err == nil {
+			delete(s.ShortCache, short)
+		}
+	}()
+
+	configs, err := s.loadConfig()
+	if err != nil {
+		return fmt.Errorf("check config failed: %w", err)
+	}
+	var res []*model.ShortURLConfig
+	for _, cfg := range configs {
+		if cfg.Short != short {
+			res = append(res, cfg)
+			continue
+		}
+		hlog.CtxInfof(ctx, "delete config=%v, long=%v", short, cfg.Long)
+	}
+	return s.saveConfig(res)
 }

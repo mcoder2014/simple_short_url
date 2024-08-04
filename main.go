@@ -12,6 +12,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	hertzlogrus "github.com/hertz-contrib/logger/logrus"
+	"github.com/mcoder2014/simple_short_url/biz/config"
 	"github.com/mcoder2014/simple_short_url/biz/handler/simple_short_url"
 	"github.com/mcoder2014/simple_short_url/util/mylog"
 	"github.com/sirupsen/logrus"
@@ -21,9 +22,11 @@ import (
 func main() {
 
 	port := os.Getenv("HOST_PORT")
-
 	h := server.Default(server.WithHostPorts(fmt.Sprintf("%s", port)))
 	InitLogger()
+	if err := config.Init("./conf/config.yaml"); err != nil {
+		panic(fmt.Errorf("init config failed,err=%v", err))
+	}
 	if err := simple_short_url.Init(); err != nil {
 		panic(fmt.Errorf("init short service failed,err=%v", err))
 	}

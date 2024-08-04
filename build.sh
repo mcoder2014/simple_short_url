@@ -6,4 +6,4 @@ cp conf/* output/conf/
 
 cp script/* output 2>/dev/null
 chmod +x output/bootstrap.sh
-go build -o output/bin/${RUN_NAME}
+go build -v -o output/bin/${RUN_NAME}

@@ -19,6 +19,7 @@ func Register(r *server.Hertz) {
 	root := r.Group("/", rootMw()...)
 	{
 		_s := root.Group("/s", _sMw()...)
+		_s.GET("/list", append(_listshorturlMw(), simple_short_url.ListShortURL)...)
 		_s.POST("/refresh", append(_refreshMw(), simple_short_url.Refresh)...)
 		_s.POST("/short_url", append(_addshorturlMw(), simple_short_url.AddShortURL)...)
 		_s.DELETE("/:url", append(_deleteshorturlMw(), simple_short_url.DeleteShortURL)...)
