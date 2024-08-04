@@ -20,9 +20,9 @@ import (
 
 func main() {
 
-	port := os.Getenv("PORT")
+	port := os.Getenv("HOST_PORT")
 
-	h := server.Default(server.WithHostPorts(fmt.Sprintf("[::]:%s", port)))
+	h := server.Default(server.WithHostPorts(fmt.Sprintf("%s", port)))
 	InitLogger()
 	if err := simple_short_url.Init(); err != nil {
 		panic(fmt.Errorf("init short service failed,err=%v", err))
