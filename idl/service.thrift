@@ -27,7 +27,7 @@ struct AddShortURLRequest {
     1: optional string Short (api.body="short")
     2: required string RedirectURL (api.body="long")
     3: optional string Desp (api.body="desp")
-    255: required string Token (api.header="access_token")
+    255: required string Token (api.header="access-token")
 }
 
 struct AddShortURLResponse {
@@ -39,7 +39,7 @@ struct AddShortURLResponse {
 
 struct DeleteShortURLRequest {
     1: required string Short (api.path="url")
-    2: required string Token (api.header="access_token")
+    2: required string Token (api.header="access-token")
 }
 
 struct DeleteShortURLResponse {
@@ -49,7 +49,7 @@ struct DeleteShortURLResponse {
 }
 
 struct RefreshRequest {
-    1: required string Token (api.header="access_token")
+    1: required string Token (api.header="access-token")
 }
 
 struct RefreshResponse {
@@ -57,14 +57,14 @@ struct RefreshResponse {
 }
 
 struct ListShortURLRequest {
-    1: required string Token (api.header="access_token")
-    2: required i32 offset (api.query="offset")
-    3: required i32 limit (api.query="limit")
+    1: required string Token (api.header="access-token")
+    2: required i32 Offset (api.query="offset")
+    3: required i32 Limit (api.query="limit")
 }
 
 struct ListShortURLResponse {
     1: list<ShortURL> ShortURLs (api.body="short_urls")
-    2: bool hasMore (api.body="hasMore")
+    2: bool HasMore (api.body="hasMore")
     255: optional BaseResp BaseResp
 }
 

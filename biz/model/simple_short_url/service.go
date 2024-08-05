@@ -910,7 +910,7 @@ type AddShortURLRequest struct {
 	Short       *string `thrift:"Short,1,optional" form:"short" json:"short,omitempty"`
 	RedirectURL string  `thrift:"RedirectURL,2,required" form:"long,required" json:"long,required"`
 	Desp        *string `thrift:"Desp,3,optional" form:"desp" json:"desp,omitempty"`
-	Token       string  `thrift:"Token,255,required" header:"access_token,required" json:"Token,required"`
+	Token       string  `thrift:"Token,255,required" header:"access-token,required" json:"Token,required"`
 }
 
 func NewAddShortURLRequest() *AddShortURLRequest {
@@ -1509,7 +1509,7 @@ func (p *AddShortURLResponse) String() string {
 
 type DeleteShortURLRequest struct {
 	Short string `thrift:"Short,1,required" json:"Short,required" path:"url,required"`
-	Token string `thrift:"Token,2,required" header:"access_token,required" json:"Token,required"`
+	Token string `thrift:"Token,2,required" header:"access-token,required" json:"Token,required"`
 }
 
 func NewDeleteShortURLRequest() *DeleteShortURLRequest {
@@ -1949,7 +1949,7 @@ func (p *DeleteShortURLResponse) String() string {
 }
 
 type RefreshRequest struct {
-	Token string `thrift:"Token,1,required" header:"access_token,required" json:"Token,required"`
+	Token string `thrift:"Token,1,required" header:"access-token,required" json:"Token,required"`
 }
 
 func NewRefreshRequest() *RefreshRequest {
@@ -2245,9 +2245,9 @@ func (p *RefreshResponse) String() string {
 }
 
 type ListShortURLRequest struct {
-	Token  string `thrift:"Token,1,required" header:"access_token,required" json:"Token,required"`
-	Offset int32  `thrift:"offset,2,required" json:"offset,required" query:"offset,required"`
-	Limit  int32  `thrift:"limit,3,required" json:"limit,required" query:"limit,required"`
+	Token  string `thrift:"Token,1,required" header:"access-token,required" json:"Token,required"`
+	Offset int32  `thrift:"Offset,2,required" json:"Offset,required" query:"offset,required"`
+	Limit  int32  `thrift:"Limit,3,required" json:"Limit,required" query:"limit,required"`
 }
 
 func NewListShortURLRequest() *ListShortURLRequest {
@@ -2271,8 +2271,8 @@ func (p *ListShortURLRequest) GetLimit() (v int32) {
 
 var fieldIDToName_ListShortURLRequest = map[int16]string{
 	1: "Token",
-	2: "offset",
-	3: "limit",
+	2: "Offset",
+	3: "Limit",
 }
 
 func (p *ListShortURLRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -2457,7 +2457,7 @@ WriteFieldEndError:
 }
 
 func (p *ListShortURLRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("offset", thrift.I32, 2); err != nil {
+	if err = oprot.WriteFieldBegin("Offset", thrift.I32, 2); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteI32(p.Offset); err != nil {
@@ -2474,7 +2474,7 @@ WriteFieldEndError:
 }
 
 func (p *ListShortURLRequest) writeField3(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("limit", thrift.I32, 3); err != nil {
+	if err = oprot.WriteFieldBegin("Limit", thrift.I32, 3); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteI32(p.Limit); err != nil {
@@ -2500,7 +2500,7 @@ func (p *ListShortURLRequest) String() string {
 
 type ListShortURLResponse struct {
 	ShortURLs []*ShortURL `thrift:"ShortURLs,1" form:"short_urls" json:"short_urls"`
-	HasMore   bool        `thrift:"hasMore,2" form:"hasMore" json:"hasMore"`
+	HasMore   bool        `thrift:"HasMore,2" form:"hasMore" json:"hasMore"`
 	BaseResp  *BaseResp   `thrift:"BaseResp,255,optional" form:"BaseResp" json:"BaseResp,omitempty" query:"BaseResp"`
 }
 
@@ -2530,7 +2530,7 @@ func (p *ListShortURLResponse) GetBaseResp() (v *BaseResp) {
 
 var fieldIDToName_ListShortURLResponse = map[int16]string{
 	1:   "ShortURLs",
-	2:   "hasMore",
+	2:   "HasMore",
 	255: "BaseResp",
 }
 
@@ -2715,7 +2715,7 @@ WriteFieldEndError:
 }
 
 func (p *ListShortURLResponse) writeField2(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("hasMore", thrift.BOOL, 2); err != nil {
+	if err = oprot.WriteFieldBegin("HasMore", thrift.BOOL, 2); err != nil {
 		goto WriteFieldBeginError
 	}
 	if err := oprot.WriteBool(p.HasMore); err != nil {
