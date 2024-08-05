@@ -713,7 +713,7 @@ func (p *RedirectShortURLRequest) String() string {
 }
 
 type RedirectShortURLResponse struct {
-	URL      string    `thrift:"URL,1" header:"Location" json:"URL"`
+	URL      string    `thrift:"URL,1" form:"URL" json:"URL" query:"URL"`
 	BaseResp *BaseResp `thrift:"BaseResp,255,optional" form:"BaseResp" json:"BaseResp,omitempty" query:"BaseResp"`
 }
 
@@ -910,7 +910,7 @@ type AddShortURLRequest struct {
 	Short       *string `thrift:"Short,1,optional" form:"short" json:"short,omitempty"`
 	RedirectURL string  `thrift:"RedirectURL,2,required" form:"long,required" json:"long,required"`
 	Desp        *string `thrift:"Desp,3,optional" form:"desp" json:"desp,omitempty"`
-	Token       string  `thrift:"Token,255,required" form:"token,required" json:"token,required"`
+	Token       string  `thrift:"Token,255,required" header:"access_token,required" json:"Token,required"`
 }
 
 func NewAddShortURLRequest() *AddShortURLRequest {
@@ -1509,7 +1509,7 @@ func (p *AddShortURLResponse) String() string {
 
 type DeleteShortURLRequest struct {
 	Short string `thrift:"Short,1,required" json:"Short,required" path:"url,required"`
-	Token string `thrift:"Token,2,required" form:"token,required" json:"token,required"`
+	Token string `thrift:"Token,2,required" header:"access_token,required" json:"Token,required"`
 }
 
 func NewDeleteShortURLRequest() *DeleteShortURLRequest {
@@ -1949,7 +1949,7 @@ func (p *DeleteShortURLResponse) String() string {
 }
 
 type RefreshRequest struct {
-	Token string `thrift:"Token,1,required" form:"token,required" json:"token,required"`
+	Token string `thrift:"Token,1,required" header:"access_token,required" json:"Token,required"`
 }
 
 func NewRefreshRequest() *RefreshRequest {
@@ -2245,7 +2245,7 @@ func (p *RefreshResponse) String() string {
 }
 
 type ListShortURLRequest struct {
-	Token  string `thrift:"Token,1,required" form:"token,required" json:"token,required"`
+	Token  string `thrift:"Token,1,required" header:"access_token,required" json:"Token,required"`
 	Offset int32  `thrift:"offset,2,required" json:"offset,required" query:"offset,required"`
 	Limit  int32  `thrift:"limit,3,required" json:"limit,required" query:"limit,required"`
 }
